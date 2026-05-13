@@ -26,7 +26,12 @@ pipeline {
 
         stage('Test App') {
            steps {
-               sh 'docker exec cloudlab curl -f http://127.0.0.1:5000'
+               sh 'docker exec cloudlab python - <<'PY'
+import urllib.request
+response = urllib.request.urlopen("http://127.0.0.1:5000")
+print(response.read().decode())
+PY
+                '''
           }
        }
     }
