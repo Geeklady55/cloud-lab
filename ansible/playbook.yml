@@ -1,0 +1,25 @@
+---
+- name: Cloud Lab Automation Check
+  hosts: local
+  gather_facts: yes
+
+  tasks:
+    - name: Show hostname
+      debug:
+        msg: "Running Ansible on {{ ansible_hostname }}"
+
+    - name: Check Docker version
+      command: docker --version
+      register: docker_version
+
+    - name: Display Docker version
+      debug:
+        var: docker_version.stdout
+
+    - name: Check Kubernetes nodes
+      command: kubectl get nodes
+      register: k8s_nodes
+
+    - name: Display Kubernetes nodes
+      debug:
+        var: k8s_nodes.stdout_lines
