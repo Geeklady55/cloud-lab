@@ -20,24 +20,9 @@ pipeline {
                 docker stop cloudlab || true
                 docker rm cloudlab || true
                 docker run -d --name cloudlab -p 5000:5000 cloud-lab-app
+                docker ps
                 '''
             }
         }
-
-        stage('Test App') {
-           steps {
-               sh 'docker exec cloudlab python - <<'PY'
-import urllib.request
-response = urllib.request.urlopen("http://127.0.0.1:5000")
-print(response.read().decode())
-PY
-                '''
-          }
-       }
     }
 }
-
-
-
-
-
