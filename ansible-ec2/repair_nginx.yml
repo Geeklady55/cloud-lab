@@ -1,0 +1,25 @@
+---
+- name: Repair EC2 nginx web server
+  hosts: ec2
+  become: yes
+
+  tasks:
+    - name: Ensure nginx is installed
+      apt:
+        name: nginx
+        state: present
+        update_cache: yes
+
+    - name: Ensure nginx is running
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Verify web server responds locally
+      command: curl -s http://127.0.0.1
+      register: web_check
+
+    - name: Show web response
+      debug:
+        var: web_check.stdout

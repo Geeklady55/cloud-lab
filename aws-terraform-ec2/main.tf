@@ -35,6 +35,11 @@ resource "aws_security_group" "web_sg" {
   }
 }
 
+resource "aws_key_pair" "cloud_lab_key" {
+  key_name   = "cloud-lab-ec2-key"
+  public_key = file("~/.ssh/cloud-lab-ec2.pub")
+}
+
 data "aws_ami" "ubuntu" {
   most_recent = true
   owners      = ["099720109477"]
@@ -48,13 +53,14 @@ data "aws_ami" "ubuntu" {
 resource "aws_instance" "web" {
   ami                    = data.aws_ami.ubuntu.id
   instance_type          = "t3.micro"
+  key_name               = aws_key_pair.cloud_lab_key.key_name
   vpc_security_group_ids = [aws_security_group.web_sg.id]
 
   user_data = <<-EOF_SCRIPT
               #!/bin/bash
               apt update -y
               apt install nginx -y
-              echo "<h1>Colleen AWS EC2 Cloud Lab</h1><p>Deployed with Terraform.</p>" > /var/www/html/index.html
+              echo "<h1>Colleen AWS EC2 Cloud Lab</h1><p>Deployed with Terraform and SSH key access.</p>" > /var/www/html/index.html
               systemctl enable nginx
               systemctl start nginx
               EOF_SCRIPT
